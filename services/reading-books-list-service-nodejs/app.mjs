@@ -33,17 +33,19 @@ const dummyBooks = [
 app.post("/reading-list/books", (req, res) => {
   const { title, author, status } = req.body;
   const uuid = uuidv4();
+  setTimeout(() => {
+    console.log(`Book with UUID ${uuid} added:`, { title, author, status });
+    if (!(status === "read" || status === "to_read" || status === "reading")) {
+      return res.status(400).json({
+        error: "Status is invalid. Accepted statuses: read | to_read | reading",
+      });
+    }
+    if (!title || !author || !status) {
+      return res.status(400).json({ error: "Title, Status or Author is empty" });
+    }
 
-  if (!(status === "read" || status === "to_read" || status === "reading")) {
-    return res.status(400).json({
-      error: "Status is invalid. Accepted statuses: read | to_read | reading",
-    });
-  }
-  if (!title || !author || !status) {
-    return res.status(400).json({ error: "Title, Status or Author is empty" });
-  }
-
-  return res.status(201).json({ uuid, title, author, status, note: NOTE_MODIFY });
+    return res.status(201).json({ uuid, title, author, status, note: NOTE_MODIFY });
+  }, 10000);
 });
 
 // update status of a book by uuid
